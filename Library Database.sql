@@ -31,8 +31,8 @@ create table publisher
 create table book
 (
  bookid int not null,
- title varchar(20) not null,
- name varchar(20) not null,
+ title varchar(20),
+ name varchar(20) ,
  pubyear int,
  primary key(bookid,name),
  foreign key(name) references publisher(name) on delete cascade
@@ -40,8 +40,8 @@ create table book
 
 create table authors
 (
- bookid int not null,
- name varchar(30) not null,
+ bookid int ,
+ name varchar(30),
  primary key(bookid),
  foreign key(bookid) references book(bookid) on delete cascade
 );
@@ -49,7 +49,7 @@ create table authors
 create table branch
 (
  branchid int,
- branchname varchar(20) not null,
+ branchname varchar(20) ,
  address varchar(200),
  primary key(branchid)
 );
@@ -63,11 +63,11 @@ create table borrower
 
 create table lending
 (
- bookid int not null ,
- branchid int not null,
- cardno int not null,
- dateout date not null,
- duedate date not null,
+ bookid int  ,
+ branchid int ,
+ cardno int,
+ dateout date,
+ duedate date ,
  primary key(bookid,branchid,cardno),
  foreign key(bookid) references book(bookid) on delete cascade,
  foreign key(branchid) references branch(branchid) on delete cascade,
@@ -76,8 +76,8 @@ create table lending
 
 create table bookcopies
 (
- bookid int not null,
- branchid int not null ,
+ bookid int ,
+ branchid int  ,
  noofcopies int  ,
  primary key(bookid,branchid),
  foreign key(bookid) references book(bookid) on delete cascade,

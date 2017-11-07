@@ -1,3 +1,18 @@
+
+/*
+Consider the following schema for Order Database:
+SALESMAN(Salesman_id, Name, City, Commission)
+CUSTOMER(Customer_id, Cust_Name, City, Grade, Salesman_id)
+ORDERS(Ord_No, Purchase_Amt, Ord_Date, Customer_id, Salesman_id)
+
+Write SQL queries to
+1. Count the customers with grades above Bangalore’s average.
+2. Find the name and numbers of all salesman who had more than one customer.
+3. List all the salesman and indicate those who have and don’t have customers in their cities (Use UNION operation.)
+4. Create a view that finds the salesman who has the customer with the highest order of a day.
+5. Demonstrate the DELETE operation by removing salesman with id 1000. All his orders must also be deleted
+*/
+
 create table salesman
 (
 	salesmanid varchar(10) not null,
@@ -73,32 +88,13 @@ insert into orders values('o15',5500,'2017-01-01','c15','s5');
 insert into orders values('o16',6500,'2017-05-01','c16','s6');
 
 
-#question 1 
-
+--question 1 
 select count(customerid) from customer where grade > ( select avg(grade) from customer where city='Bangalore' );
-+-------------------+
-| count(customerid) |
-+-------------------+
-|                12 |
-+-------------------+
 
 
 
-#question 2
-
-
-
+--question 2
 select s.name , s.salesmanid , count(*)  from customer c , salesman s where s.salesmanid=c.salesmanid  group by c.salesmanid , s.name having count(*) > 1;
-
-+--------+------------+----------+
-| name   | salesmanid | count(*) |
-+--------+------------+----------+
-| Amir   | s1         |        3 |
-| Daniel | s2         |        2 |
-| Thomas | s3         |        9 |
-+--------+------------+----------+
-
-
 
 
 
@@ -107,24 +103,12 @@ select s.name , s.salesmanid , count(*)  from customer c , salesman s where s.sa
 
 
 
-
-# queston 4 --> Create a view that finds the salesman who has the customer with the highestorder of a day.
-
+--queston 4 --> Create a view that finds the salesman who has the customer with the highestorder of a day.
 create view v10 as select b.orddate , a.salesmanid , a.name , b.customerid from salesman  a , orders b where a.salesmanid = b.salesmanid and b.amount = (select max(amount) from orders c where c.orddate = b.orddate);
-
 select * from v10;
 
 
-
-
-#queston 5 -->>>>  delete query 
-
-
+--queston 5 -->>>>  delete query 
 delete from salesman where salesmanid = "s6" ; 
-
 -- check the order table and check whether  all orders belong to s6 were deleted  
-
-
-
-
 

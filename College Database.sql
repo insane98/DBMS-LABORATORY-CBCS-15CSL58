@@ -202,6 +202,12 @@ CREATE VIEW finalia AS
     FROM
         iamarks
     GROUP BY usn , subcode);
+    
+    
+UPDATE iamarks i set final=(SELECT finalia from finadlia f where i.usn=f.usn and
+i.subcode=f.subcode);
+    
+    
 
 /*Categorize students based on the following criterion:
 If FinalIA = 17 to 20 then CAT = ‘Outstanding’

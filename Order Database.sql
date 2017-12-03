@@ -100,6 +100,9 @@ select s.name , s.salesmanid , count(*)  from customer c , salesman s where s.sa
 
 -- question 3 
 
+select distinct s.salesmanid from salesman s , customer c where s.city = c.city and c.salesmanid=s.salesmanid
+union 
+select distinct s.salesmanid from salesman s , customer c where s.city != c.city  and c.salesmanid=s.salesmanid;
 
 
 

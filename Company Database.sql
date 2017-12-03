@@ -1,7 +1,6 @@
 CREATE TABLE Employee (
     ssn INT ,
-    fname VARCHAR(25),
-    lname varchar(30),
+    name varchar(30),
     address VARCHAR(25),
     sex VARCHAR(10),
     salary INT,
@@ -48,6 +47,16 @@ CREATE TABLE project (
 );
 
 
+create table works_on (
+
+	SSN int ,
+	PNO int ,
+	HOURS int ,
+	Primary key(SSN,PNO),
+	foreign key (ssn) references Employee(ssn) on delete cascade ,
+	foreign key (pno) references project(pno) on delete cascade 	
+
+);
 
 
 Insert into department(dno,dname) values(1,"Account");
@@ -69,7 +78,7 @@ INSERT INTO `Employee` (`SSN`, `NAME`, `ADDRESS`, `SEX`, `SALARY`, `DNO`) VALUES
 INSERT INTO `Employee` (`SSN`, `NAME`, `ADDRESS`, `SEX`, `SALARY`, `DNO`) VALUES ('984600445', 'MARK', 'WASHINGTON','MALE', '800000', '5');
 INSERT INTO `Employee` (`SSN`, `NAME`, `ADDRESS`, `SEX`, `SALARY`, `DNO`) VALUES ('56789012', 'ALEENA', 'LONDON', 'FEMALE', '700000', '5');
 INSERT INTO `Employee` (`SSN`, `NAME`, `ADDRESS`, `SEX`, `SALARY`, `DNO`) VALUES ('89012345', 'ALICE', 'STAFFORD', 'FEMALE', '1200000', '5');
-
+INSERT INTO `Employee` (`SSN`, `NAME`, `ADDRESS`, `SEX`, `SALARY`, `DNO`) VALUES ('1111111', 'ALI', 'PARIS', 'MALE','700000', '1');
 
 
 UPDATE `Employee` SET `superssn` = '984600445' WHERE `ssn` = 23412356;
@@ -105,21 +114,17 @@ INSERT INTO project (`PNAME`, `PNO`, `PLOCATION`, `DNO`) VALUES('REORGANIZATION'
 
 
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('123456789', '1', '33');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('123456789', '2', '8');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('984600445', '3', '40');
 INSERT INTO `works_on`(`SSN`, `PNO`, `HOURS`) VALUES ('984600445', '1', '50');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('888666555', '1', '45');
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('888666555', '2', '54');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('33344555', '2', '10');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('33344555', '3', '10');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('33344555', '10', '10');
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('33344555', '20', '10');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('67891234', '30', '20');
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('67891234', '10', '20');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('23412356', '30', '12');
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('23412356', '20', '14');
-INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('23456781', '20', '20');
 INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('23456781', '1', '34');
+INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('1111111', '1', '33');
+INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('1111111', '2', '33');
+INSERT INTO `works_on` (`SSN`, `PNO`, `HOURS`) VALUES ('1111111', '3', '33');
+
+
 
 
 
@@ -128,20 +133,19 @@ Make a list of all project numbers for projects that involve an Employee whose l
 name is ‘Scott’, either as a worker or as a manager of the department that controls
 the project
 **/
-select distinct p.pno from project p, department d, Employee e where p.dno=d.dno and d.mgrssn=e.ssn and lname="scott" union select distinct p.pno from project p, works_on w,Employee e where w.pno=p.pno and w.ssn=e.ssn and lname="scott";
-
+select distinct p.pno from project p, department d, Employee e where p.dno=d.dno and d.mgrssn=e.ssn and name="JENNIFER" union select distinct p.pno from project p, works_on w,Employee e where w.pno=p.pno and w.ssn=e.ssn and name="JENNIFER";
 
 
 
 -- Show the resulting salaries if every Employee working on the ‘IoT’ project is given a 10 percent raise.
 
-select fname, lname, 0.1*salary from Employee e, works_on w, project p where e.ssn=w.ssn and p.pno=w.pno and p.pname="iot";
+select name, 0.1*salary from Employee e, works_on w, project p where e.ssn=w.ssn and p.pno=w.pno and p.pname="iot";
 
 
 -- Find the sum of the salaries of all Employees of the ‘Accounts’ department, as well as the maximum salary, the minimum salary, and the average salary in this department.
 
 
-select sum(salary) as SUM, max(salary) as MAX, min(salary) as MIN, avg(salary) as AVG from Employee e, department d where e.dno=d.dno and dname="accounts";
+select sum(salary) as SUM, max(salary) as MAX, min(salary) as MIN, avg(salary) as AVG from Employee e, department d where e.dno=d.dno and dname="sales";
 
 
 
@@ -149,9 +153,29 @@ select sum(salary) as SUM, max(salary) as MAX, min(salary) as MIN, avg(salary) a
 
 --Retrieve the name of each Employee who works on all the projects controlled by department number 5 (use NOT EXISTS operator).
 
-select name from Employee where not exists ( ( select Pnumber from project where Dnum=5) except ( select pno from works_on where ssn=essn) );
+ 
+SELECT 
+    e.ssn
+FROM
+    Employee e
+WHERE
+    NOT EXISTS( SELECT DISTINCT
+            *
+        FROM
+            project p,
+            works_on w
+        WHERE
+            w.pno = p.pno AND p.dno = 5
+                AND NOT EXISTS( SELECT 
+                    *
+                FROM
+                    works_on w1
+                WHERE
+                    e.ssn = w1.ssn AND w1.pno = w.pno));
+
+
 
 
 -- For each department that has more than five Employees, retrieve the department number and the number of its Employees who are making more than Rs. 6,00,000.
-Select d.dno  ,count(*) as No_Of_Employees from department d, Employee e where d.dno=e.dno and e.salary>600000 and e.dno in (select dno from Employee group by dno having count(*)>5) group by d.dno
+Select d.dno  ,count(*) as No_Of_Employees from department d, Employee e where d.dno=e.dno and e.salary>600000 and e.dno in (select dno from Employee group by dno having count(*)>5) group by d.dno;
 

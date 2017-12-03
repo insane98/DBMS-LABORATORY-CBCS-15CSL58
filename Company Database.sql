@@ -155,7 +155,7 @@ select sum(salary) as SUM, max(salary) as MAX, min(salary) as MIN, avg(salary) a
 
  
 SELECT 
-    e.ssn
+    e.name
 FROM
     Employee e
 WHERE

@@ -7,6 +7,7 @@ PUBLISHER(Name, Address, Phone)
 BOOK_COPIES(Book_id, Branch_id, No-of_Copies)
 BOOK_LENDING(Book_id, Branch_id, Card_No, Date_Out, Due_Date)
 LIBRARY_BRANCH(Branch_id, Branch_Name, Address)
+BORROWER(Cardno,name)
 Write SQL queries to
 1. Retrieve details of all books in the library – id, title, name of publisher,
 authors, number of copies in each branch, etc.
